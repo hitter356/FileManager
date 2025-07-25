@@ -1,0 +1,195 @@
+@import url('https://v1.fontapi.ir/css/Vazir');
+@import url('https://fonts.googleapis.com/css2?family=Share:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo+Play:wght@200..1000&family=Lalezar&display=swap');
+
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family:'Ubuntu'sans-serif;
+    color: rgb(235, 235, 235);
+    
+}
+*{
+    --grid-num1-w : 100%;
+    --grid-num1-h :  9vw;
+    --movie-card1-background:#1E1E1E;
+    --movie-card2-background:#272727;
+    --page-top-header-color1:#fff;
+    --movie-card1-colorImg:#fff;
+    --vazir:"vazir";
+}
+
+html{
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: #e7e7e7d0 #1e1e1e7c;
+    transition: filter 1s ease-in;
+}
+
+body{
+    min-height: 100vh;
+    width: 100%;
+    overflow: auto;
+    background:var(--movie-card1-background);
+}
+
+.loaderl37 {
+    font-weight: bold;
+    font-family: monospace;
+    display: inline-grid;
+    font-size:15px;
+  }
+  .loaderl37:before,
+  .loaderl37:after {
+    content:"درحال پردازش";
+    font-family: var(--vazir);
+    grid-area: 1/1;
+    -webkit-mask-size: 2ch 100%,100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-composite: xor;
+            mask-composite:exclude;
+    animation: l37 1s infinite;
+  }
+  .loaderl37:before {
+    -webkit-mask-image:
+      linear-gradient(#000 0 0),
+      linear-gradient(#000 0 0);
+  }
+  .loaderl37:after {
+    -webkit-mask-image:linear-gradient(#000 0 0);
+    transform: scaleY(0.5);
+  }
+  
+  @keyframes l37{
+    0%    {-webkit-mask-position:1ch  0,0 0}
+    12.5% {-webkit-mask-position:100% 0,0 0}
+    25%   {-webkit-mask-position:4ch  0,0 0}
+    37.5% {-webkit-mask-position:8ch  0,0 0}
+    50%   {-webkit-mask-position:2ch  0,0 0}
+    62.5% {-webkit-mask-position:100% 0,0 0}
+    75%   {-webkit-mask-position:0ch  0,0 0}
+    87.5% {-webkit-mask-position:6ch  0,0 0}
+    100%  {-webkit-mask-position:3ch  0,0 0}
+}
+/*  */
+.message-fillgoo{
+    position: fixed;
+    display: flex;
+    align-items: center;
+    color: #161616;
+}
+/* تنظیمات مکان‌یابی پیام */
+.message-fillgoo.top {
+    top: 20px;
+}
+
+
+.message-fillgoo.bottom {
+    bottom: 20px;
+}
+
+.message-fillgoo.left {
+    left: 20px;
+}
+
+.message-fillgoo.center {
+    left: 50%; 
+    transform: translateX(-50%); /* حرکت به مرکز افقی */
+}
+
+.message-fillgoo.middle {
+    top: 50%;
+    transform: translateY(-50%); /* حرکت به مرکز عمودی */
+}
+.message-fillgoo.right {
+    right: 20px;
+}
+#messageFillgoo{
+    padding: 5px 10px;
+    width: 100%;
+    min-width: 230px;
+    min-height: 52px;
+    border-radius: 6px;
+    box-shadow: #16161680 3px 2px 10px;
+    text-shadow: 2px 2px 6px rgba(22, 22, 22, 0.644);
+    z-index: 99999999999;
+    transition: 0.5s;
+}
+
+
+#messageFillgooN1{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    margin-top: 4px;
+}
+.message-fillgoo h3{
+    color: inherit;
+    font-family: 'vazir';
+    font-size: 12px;
+    user-select: none;
+    width: 100%;
+    text-align: right;
+    margin-top: 8px;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1; /* تعداد خطوطی که می‌خواهید نمایش دهید */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+#messageFillgooN1 img{
+    width: 30px;
+    height: 30px;
+    margin-top: 3px;
+}
+/* کلاس برای انیمیشن محو شدن */
+.message-fillgoo.fade-out {
+    animation: fadeOut 0.8s forwards; /* انیمیشن محو شدن */
+}
+
+
+/* انیمیشن محو شدن */
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+
+/* استایل برای تایمر (نوار پیشرفت) */
+.message-fillgoo .message-fillgoo-timer {
+    position: absolute;
+    bottom: -2.5px;
+    left: 0px;
+    height: 5px;
+    background-color: red;
+    margin-top: 10px;
+    width: 100%;
+    transition: width 0.1s linear;
+}
+
+/* نمونه رنگ‌ها برای انواع پیام‌ها */
+.message-fillgoo.success {
+    background-color: #4CAF50;
+}
+
+.message-fillgoo.error {
+    background-color: #f44336;
+}
+
+.message-fillgoo.info {
+    background-color: #2196F3;
+}
+
+.message-fillgoo.warning {
+    background-color: #ff9800;
+}
+
+/*  */
