@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1e1e1e">
+  <title>Amir Roohi | File management</title>
+  <link rel="icon" href="/sorce/icon/folder_settings_384px.png">
+  <!-- css -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/filemanager.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <!-- Popper.js (dependency) -->
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
+  <!-- Tippy.js -->
+  <script src="https://unpkg.com/tippy.js@6"></script>
+  <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light.css" />
+  <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/animations/scale.css" />
+  <style>
+    .tippy-content{
+      text-align: center;
+      font-family: var(--vazir);
+    }
+
+  </style>
+  </head>
+<body class="File-management">
+  <header>
+    <section class="File-management-fillgoo">
+      <img class="fillgoo-img" src="/sorce/icon/folder_settings_384px.png" alt="fillgoo">
+      <h1 dir="rtl">مدیریت فایل های سرور در Node.js</h1>
+    </section>
+    <nav class="File-management-header-navbar">
+      <div class="display-flex" style="align-items: center; width:100%"><a href="/filemanager" class="a-button-icon"><div class="icon x-home-p"></div></a><span id="currentPath"><%= currentPath %></span></div>
+    <div id="file-actions" style="display: flex; gap: 8px; margin-bottom: 12px;">
+      <button id="pasteButton" onclick="pasteFiles()" style="display: none;"><div class="icon x-paste"></button>
+      <button onclick="copySelected()" disabled id="btn-copy"><div class="icon x-copy"></button>
+      <button onclick="moveSelected()" disabled id="btn-move"><div class="icon x-move"></button>
+      <button onclick="deleteSelected()" disabled id="btn-delete"><div class="icon x-delete"></button>
+      <button onclick="renameSelected()" disabled id="btn-rename"><div class="icon x-rename"></div></button>
+
+      <span class="x-sp"></span>
+      <button onclick="createFolder()"><div class="icon x-new-folder"></div></button>
+      <button onclick="createFile()"><div class="icon x-new-file"></button>
+      <span class="x-sp"></span>
+      <button onclick="downloadSelected()" disabled id="btn-download"><div class="icon x-download"></button>
+      <label for="upload-file" class="btn-upload">آپلود فایل</label>
+      <input type="file" id="upload-file" style="display: none" onchange="uploadFile()" />
+    </div>
+    
+    </nav>
+  </header>
+  <section class="File-management-body">
+  <ul style="margin-bottom: 50px;" id="fileList"><div class="loaderl37"></div></ul>
+  </section>
+  <div class="File-management-context">
+    <ul id="context-menu" style="display: none;">
+      <li onclick="contextDownload()"><div class="icon x-download"></div> دانلود</li>
+    <li onclick="contextCopyPath()"><div class="icon x-path"></div> کپی لینک </li>
+    <li onclick="contextCopy()"><div class="icon x-copy"></div> کپی</li>
+    <li onclick="contextMove()"><div class="icon x-move"></div> انتقال</li>
+    <li onclick="contextRename()"><div class="icon x-rename"></div> تغییر نام</li>
+    <li onclick="contextDelete()"><div class="icon x-delete"></div> حذف</li>
+    <li onclick="toggleInfoPanel()" id="btn-info" disabled><div class="icon x-info"></div>مشخصات</li>
+  </ul>
+  
+  <div id="infoPanel" style="display: none;">
+    <button class="icon x-close infoPanel-close" onclick="closeInfoPanel()"></button>    
+    <h4 style="margin: 0 0 10px;">نمایش اطلاعات فایل</h4>
+    <div id="infoContent">هیچ فایلی انتخاب نشده</div>
+  </div>
+  </div>
+  
+  <div class="loadingPanel">
+    <div class="loaderl37"></div>
+  </div>
+<script>  
+    function closeInfoPanel() {
+  document.getElementById('infoPanel').style.display = 'none';
+}
+
+    function toggleInfoPanel() {
+  const panel = document.getElementById('infoPanel');
+  if (panel.style.display === 'none') {
+    updateInfoPanel();
+    panel.style.display = 'block';
+  } else {
+    panel.style.display = 'none';
+  }
+}
+
+function updateInfoPanel() {
+  const content = document.getElementById('infoContent');
+  if (selectedFiles.length === 0) {
+    content.innerHTML = 'هیچ فایلی انتخاب نشده';
+    return;
+  }
+
+  const list = selectedFiles.map(path => {
+    const name = path.split('/').pop();
+    const ext = name.includes('.') ? name.split('.').pop().toLowerCase() : '';
+    const fileUrl = encodeURI(path); // برای آدرس‌دهی به فایل
+
+    let previewHTML = '';
+
+    if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg'].includes(ext)) {
+      // 📷 عکس
+      previewHTML = `<img src="${fileUrl}" alt="${name}" style="max-width: 100%; border-radius: 6px; margin: 10px 0;">`;
+    } else if (['mp4', 'webm', 'ogg', 'mov'].includes(ext)) {
+      // 🎥 ویدیو
+      previewHTML = `
+        <video controls style="width: 100%; border-radius: 6px; margin: 10px 0;">
+          <source src="${fileUrl}" type="video/${ext === 'mov' ? 'quicktime' : ext}">
+          مرورگر شما از ویدیو پشتیبانی نمی‌کند.
+        </video>`;
+    } else if (['mp3', 'wav', 'ogg', 'aac', 'flac'].includes(ext)) {
+      // 🎵 موزیک
+      previewHTML = `
+        <audio controls style="width: 100%; margin: 10px 0;">
+          <source src="${fileUrl}" type="audio/${ext}">
+          مرورگر شما از پخش صوت پشتیبانی نمی‌کند.
+        </audio>`;
+    }
+
+    return `
+    <li class="infoPanel-text" style="margin-bottom: 20px; width: 100%;">
+      <strong style="margin-left:5px">${name}</strong><br>
+      ${previewHTML}
+      <div style="display: flex; align-items: center;"><div class="icon x-file"></div> نوع: ${ext || 'پوشه'}</div>
+    </li>`;
+  });
+
+  content.innerHTML = `<ul style="padding-right: 16px; list-style: none; padding-left: 0;">${list.join('')}</ul>`;
+}
+
+
+  </script>
+  
+  
+  <script>
+    tippy('#pasteButton', {
+      content: 'چسباندن : موارد که قبلاً کپی یا انتقال زده اید را در این مسیر قرار می‌دهد',
+      animation: 'scale',
+      theme: 'light',
+      delay: [500, 200], 
+      placement: 'bottom',
+    });
+  
+    tippy('#btn-copy', {
+      content: 'کپی : پوشه و فایل‌های انتخاب‌شده را برای چسباندن در مسیر دیگر کپی می‌کند',
+      animation: 'scale',
+      theme: 'light',
+      delay: [500, 200], 
+      placement: 'bottom',
+    });
+  
+    tippy('#btn-move', {
+      content: 'انتقال : پوشه و فایل‌های انتخاب‌شده را به مسیر دیگر منتقل می‌کند',
+      animation: 'scale',
+      theme: 'light',
+      delay: [500, 200], 
+      placement: 'bottom',
+    });
+  
+    tippy('#btn-delete', {
+      content: 'حذف : فایل‌ها یا پوشه‌های انتخاب‌شده را حذف می‌کند',
+      animation: 'scale',
+      theme: 'light',
+      delay: [500, 200], 
+      placement: 'bottom',
+    });
+  
+    tippy('#btn-rename', {
+      content: 'تغییر نام: نام فایل یا پوشه انتخاب‌شده را ویرایش می‌کند',
+      animation: 'scale',
+      theme: 'light',
+      delay: [500, 200], 
+      placement: 'bottom',
+    });
+  
+    tippy('.x-new-folder', {
+      content: 'ساخت پوشه جدید: یک پوشه جدید در مسیر فعلی ایجاد می‌کند',
+      animation: 'scale',
+      theme: 'light',
+      delay: [500, 200], 
+      placement: 'bottom',
+    });
+  
+    tippy('.x-new-file', {
+      content: 'ساخت فایل جدید: یک فایل خالی در مسیر فعلی ایجاد می‌کند',
+      animation: 'scale',
+      theme: 'light',
+      delay: [500, 200], 
+      placement: 'bottom',
+    });
+  
+    tippy('.btn-upload', {
+      content: 'آپلود فایل: فایل‌هایی از دستگاه خود را در مسیر فعلی بارگذاری کنید',
+      animation: 'scale',
+      theme: 'light',
+      delay: [500, 200], 
+      placement: 'bottom',
+    });
+  
+    tippy('#btn-download', {
+      content: 'دانلود فایل: فایل انتخاب‌شده را دانلود می‌کند',
+      animation: 'scale',
+      theme: 'light',
+      delay: [500, 200], 
+      placement: 'bottom',
+    });
+  </script>
+  
+ <script>
+  let selectedFiles = [];
+
+  function toggleSelection(elem, name, isDirectory) {
+  const fullPath = currentPath + '/' + name;
+  const index = selectedFiles.indexOf(fullPath);
+
+  if (index > -1) {
+    selectedFiles.splice(index, 1);
+    elem.classList.remove('selected');
+  } else {
+    selectedFiles.push(fullPath);
+    elem.classList.add('selected');
+  }
+  if (document.getElementById('infoPanel').style.display === 'block') {
+  updateInfoPanel();
+}
+
+  
+
+  updateActionButtons();
+}
+
+
+  function updateActionButtons() {
+    const hasSelection = selectedFiles.length > 0;
+    document.getElementById('btn-copy').disabled = !hasSelection;
+    document.getElementById('btn-move').disabled = !hasSelection;
+    document.getElementById('btn-delete').disabled = !hasSelection;
+    document.getElementById('btn-download').disabled = !hasSelection;
+    document.getElementById('btn-rename').disabled = selectedFiles.length !== 1;
+    document.getElementById('btn-info').disabled = !hasSelection;
+
+  }
+  
+</script>
+<script>
+  let clipboard = {
+  action: null, // 'copy' or 'move'
+  files: []
+};
+
+  
+function moveSelected() {
+  clipboard = {
+    action: 'move',
+    files: [...selectedFiles]
+  };
+  document.getElementById('pasteButton').style.display = 'inline-block';
+  createMessage({
+                  text: 'وارد مسیر مورد نظر بشو و Paste بزن.',
+                  type: 'info',
+                  timer: 3,
+                  backcolor: '#252524',
+                  color: '#fff',
+                  image: '/sorce/icon/high_priority_message_480px.png',
+                  location: 'top',
+                  align: 'center',
+                });
+
+                 
+  fetch('/api/filemanager/move', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      from: selectedFiles[0], // فقط یکی برای سادگی فعلاً
+      to: to + '/' + selectedFiles[0].split('/').pop()
+    })
+  }).then(r => r.json()).then(res => {
+    if (res.success) location.reload();
+    else {
+      createMessage({
+                  text: `خطا در انتقال`,
+                  type: 'info',
+                  timer: 3,
+                  backcolor: '#aa2101',
+                  color: '#fff',
+                  image: '/sorce/icon/high_priority_message_480px.png',
+                  location: 'top',
+                  align: 'center',
+                });
+    }
+  });
+  }
+
+function copySelected() {
+  sessionStorage.setItem('copyFiles', JSON.stringify(selectedFiles));
+  clipboard = {
+    action: 'copy',
+    files: [...selectedFiles]
+  };
+  document.getElementById('pasteButton').style.display = 'inline-block';
+  createMessage({
+                  text: 'وارد مسیر مورد نظر بشو و Paste بزن.',
+                  type: 'info',
+                  timer: 3,
+                  backcolor: '#252524',
+                  color: '#fff',
+                  image: '/sorce/icon/high_priority_message_480px.png',
+                  location: 'top',
+                  align: 'center',
+                });
+}
+
+function createFolder() {
+  const name = prompt('نام پوشه جدید را وارد کن:');
+  if (!name) return;
+
+  fetch('/api/filemanager/mkdir', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ path: currentPath, name })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) loadFiles(currentPath);
+    else alert(data.error || 'ساخت پوشه انجام نشد!');
+  });
+}
+
+function createFile() {
+  const name = prompt('نام فایل جدید را وارد کن (مثلاً new.txt):');
+  if (!name) return;
+
+  fetch('/api/filemanager/create-file', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ path: currentPath, name })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) loadFiles(currentPath);
+    else alert(data.error || 'ساخت فایل انجام نشد!');
+  });
+}
+function createFile() {
+  const name = prompt('نام فایل جدید را وارد کن (مثلاً new.txt):');
+  if (!name) return;
+
+  fetch('/api/filemanager/create-file', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ path: currentPath, name })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) loadFiles(currentPath);
+    else {
+      createMessage({
+                  text: `ساخت فایل انجام نشد.`,
+                  type: 'info',
+                  timer: 3,
+                  backcolor: '#aa2101',
+                  color: '#fff',
+                  image: '/sorce/icon/high_priority_message_480px.png',
+                  location: 'top',
+                  align: 'center',
+                });
+    }
+  });
+}
+
+
+function deleteSelected() {
+  if (!confirm('آیا از حذف مطمئنی؟')) return;
+
+  fetch('/api/filemanager?path=' + encodeURIComponent(selectedFiles[0]), {
+    method: 'DELETE'
+  }).then(r => r.json()).then(res => {
+    if (res.success) location.reload();
+    else {
+      createMessage({
+                  text: `حذف نشد.`,
+                  type: 'info',
+                  timer: 3,
+                  backcolor: '#aa2101',
+                  color: '#fff',
+                  image: '/sorce/icon/high_priority_message_480px.png',
+                  location: 'top',
+                  align: 'center',
+                });
+    }
+  });
+}
+
+function renameSelected() {
+  if (selectedFiles.length !== 1) return;
+
+  const oldPath = selectedFiles[0];
+  const nameOnly = oldPath.split('/').pop();
+  const newName = prompt('نام جدید را وارد کن:', nameOnly);
+  if (!newName || newName === nameOnly) return;
+
+  const newPath = oldPath.split('/').slice(0, -1).join('/') + '/' + newName;
+
+  fetch('/api/filemanager/rename', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      oldPath,
+      newPath
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) loadFiles(currentPath);
+    else {
+      createMessage({
+                  text: data.error || 'تغییر نام انجام نشد!',
+                  type: 'info',
+                  timer: 3,
+                  backcolor: '#aa2101',
+                  color: '#fff',
+                  image: '/sorce/icon/high_priority_message_480px.png',
+                  location: 'top',
+                  align: 'center',
+                });
+    }
+  });
+}
+function contextRename() {
+  if (!contextTarget || !contextTarget.fileName) return;
+
+  const oldName = contextTarget.fileName;
+  const newName = prompt('نام جدید را وارد کن:', oldName);
+  if (!newName || newName === oldName) return;
+
+  const oldPath = currentPath + '/' + oldName;
+  const newPath = currentPath + '/' + newName;
+
+  fetch('/api/filemanager/rename', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      oldPath,
+      newPath
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      loadFiles(currentPath);
+    } else {
+      createMessage({
+                  text: data.error || 'تغییر نام ناموفق بود!',
+                  type: 'info',
+                  timer: 3,
+                  backcolor: '#aa2101',
+                  color: '#fff',
+                  image: '/sorce/icon/high_priority_message_480px.png',
+                  location: 'top',
+                  align: 'center',
+                });
+    }
+  });
+
+  contextMenu.style.display = 'none';
+}
+
+
+
+function uploadFile() {
+  document.querySelector('.loadingPanel').style.display = "flex";
+
+  const file = document.getElementById('upload-file').files[0];
+  if (!file) return;
+  const formData = new FormData();
+  formData.append('file', file);
+
+  fetch('/api/filemanager/upload?path=' + encodeURIComponent(currentPath), {
+    method: 'POST',
+    body: formData
+  }).then(r => r.json()).then(res => {
+    if (res.success) location.reload();
+    else {
+      createMessage({
+                  text: `آپلود ناموفق بود.`,
+                  type: 'info',
+                  timer: 3,
+                  backcolor: '#aa2101',
+                  color: '#fff',
+                  image: '/sorce/icon/high_priority_message_480px.png',
+                  location: 'top',
+                  align: 'center',
+                });
+    }
+  });
+}
+
+function downloadSelected() {
+  if (selectedFiles.length !== 1) {
+    createMessage({
+                  text: `فقط یک فایل قابل دانلود می باشد.`,
+                  type: 'info',
+                  timer: 3,
+                  backcolor: '#aa2101',
+                  color: '#fff',
+                  image: '/sorce/icon/high_priority_message_480px.png',
+                  location: 'top',
+                  align: 'center',
+                });
+    return;
+  }
+  window.location.href = '/api/filemanager/download?path=' + encodeURIComponent(selectedFiles[0]);
+}
+
+function pasteFiles() {
+  if (!clipboard.action || clipboard.files.length === 0) return;
+
+  fetch('/api/filemanager/paste', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      files: clipboard.files,
+      targetPath: currentPath,
+      operation: clipboard.action
+    })
+  })
+  .then(res => res.json())
+  .then(result => {
+    if (result.success) {
+      clipboard = { action: null, files: [] };
+      document.getElementById('pasteButton').style.display = 'none';
+      loadFiles(currentPath);
+    } else {
+      alert(result.error || 'Paste failed');
+    }
+  });
+}
+
+function contextCopy() {
+  clipboard = {
+    action: 'copy',
+    files: [...selectedFiles]
+  };
+  createMessage({
+                  text: 'کپی شد! حالا داخل پوشه مقصد راست‌کلیک و Paste کن.',
+                  type: 'info',
+                  timer: 3,
+                  backcolor: '#252524',
+                  color: '#fff',
+                  image: '/sorce/icon/high_priority_message_480px.png',
+                  location: 'top',
+                  align: 'center',
+                });
+  contextMenu.style.display = 'none';
+}
+
+function contextMove() {
+  clipboard = {
+    action: 'move',
+    files: [...selectedFiles]
+  };
+  createMessage({
+                  text: `وارد مسیر مورد نظر بشوید و Paste را بزن.`,
+                  type: 'info',
+                  timer: 4,
+                  backcolor: '#252524',
+                  color: '#fff',
+                  image: '/sorce/icon/high_priority_message_480px.png',
+                  location: 'top',
+                  align: 'center',
+                });
+  contextMenu.style.display = 'none';
+}
+
+function contextDownload() {
+  if (selectedFiles.length !== 1) return alert('فقط یکی قابل دانلوده!');
+  window.location.href = '/api/filemanager/download?path=' + encodeURIComponent(selectedFiles[0]);
+  contextMenu.style.display = 'none';
+}
+
+function contextDelete() {
+  if (!confirm('مطمئنی حذف بشه؟')) return;
+  fetch('/api/filemanager?path=' + encodeURIComponent(selectedFiles[0]), {
+    method: 'DELETE'
+  }).then(res => res.json()).then(res => {
+    if (res.success) loadFiles(currentPath);
+    else { createMessage({
+                  text: `حذف ناموفق بود.`,
+                  type: 'info',
+                  timer: 3,
+                  backcolor: '#aa2101',
+                  color: '#fff',
+                  image: '/sorce/icon/high_priority_message_480px.png',
+                  location: 'top',
+                  align: 'center',
+                });}
+  });
+  contextMenu.style.display = 'none';
+}
+
+</script>
+<script>
+  const contextMenu = document.getElementById('context-menu');
+let contextTarget = null;
+
+document.addEventListener('click', () => {
+  contextMenu.style.display = 'none';
+});
+
+function showContextMenu(event, elem, fileName, isDirectory) {
+  event.preventDefault();
+  contextTarget = { elem, fileName, isDirectory };
+  
+  const fullPath = currentPath + '/' + fileName;
+  if (!selectedFiles.includes(fullPath)) {
+    selectedFiles = [fullPath];
+    document.querySelectorAll('.selected').forEach(e => e.classList.remove('selected'));
+    elem.classList.add('selected');
+  }
+
+  updateActionButtons();
+
+  contextMenu.style.top = event.pageY + 'px';
+  contextMenu.style.left = event.pageX + 'px';
+  contextMenu.style.display = 'block';
+}
+
+function contextCopyPath() {
+  if (!contextTarget || !contextTarget.fileName) return;
+
+  const fullPath =  currentPath + '/' + contextTarget.fileName;
+
+  navigator.clipboard.writeText(fullPath)
+    .then(() => {
+      createMessage({
+                  text: `مسیر در کلیپبورد کپی شد.`,
+                  type: 'info',
+                  timer: 3,
+                  backcolor: '#252524',
+                  color: '#fff',
+                  image: '/sorce/icon/high_priority_message_480px.png',
+                  location: 'top',
+                  align: 'center',
+                });
+    })
+    .catch(err => {
+      console.error('خطا در کپی مسیر:', err);
+      createMessage({
+                  text: `خطا در کپی`,
+                  type: 'info',
+                  timer: 3,
+                  backcolor: '#aa2101',
+                  color: '#fff',
+                  image: '/sorce/icon/high_priority_message_480px.png',
+                  location: 'top',
+                  align: 'center',
+                });
+    });
+
+  contextMenu.style.display = 'none';
+}
+
+</script>
+<script>
+  const fileList = document.getElementById('fileList');
+const currentPathSpan = document.getElementById('currentPath');
+const urlParams = new URLSearchParams(window.location.search);
+
+let currentPath = urlParams.get('path') || '/';
+
+// جایگزینی \ با /
+currentPath = currentPath.replace(/\\/g, '/');
+
+if (!currentPath.startsWith('/')) {
+currentPath = '/' + currentPath;
+}
+
+console.log('Current Path:', currentPath);
+
+function loadFiles(path) {
+  fetch(`/api/filemanager/files?path=${encodeURIComponent(path)}`)
+    .then(res => res.json())
+    .then(data => {
+      // 🎯 پاک کردن انتخاب‌ها:
+      selectedFiles = [];
+      updateActionButtons();
+
+      currentPath = data.path;
+      currentPathSpan.textContent = currentPath;
+      fileList.innerHTML = '';
+      
+      const newUrl = `/filemanager?path=${encodeURIComponent(currentPath)}`;
+      history.pushState(null, '', newUrl);
+
+      if (currentPath !== '/') {
+        const upPath = currentPath.split('/').slice(0, -1).join('/') || '/';
+        const upLi = document.createElement('li');
+        upLi.innerHTML = `<div class="display-flex" style="align-items: center;"><div class="icon x-back-p"></div><a href="#" style="width: 100%;" onclick="loadFiles('${upPath}')"> .. بازگشت</a></div>`;
+        fileList.appendChild(upLi);
+      }
+
+      data.files.forEach(file => {
+        const li = document.createElement('li');
+        li.setAttribute('data-name', file.name);
+
+        if (file.isDirectory) {
+  li.className = 'folder';
+  const nextPath = (currentPath === '/' ? '' : currentPath) + '/' + file.name;
+  
+  const iconHTML = file.customIcon
+    ? `<img src="${file.customIcon}" style="width: 20px; height: 20px; border-radius: 4px; margin-left: 5px;">`
+    : `<div class="icon x-folder a-${file.name}"></div>`;
+    
+  li.innerHTML = `${iconHTML}<a href="#" onclick="event.stopPropagation(); loadFiles('${nextPath}')">${file.name}</a>`;
+}
+ else {
+          li.className = 'file';
+          const fileUrl = (currentPath === '/' ? '' : currentPath) + '/' + file.name;
+           // گرفتن پسوند فایل
+          const extension = file.name.includes('.') ? '.' + file.name.split('.').pop() : '';
+          const nameWithoutExtension = file.name.includes('.') ? file.name.split('.').pop() : '';
+          li.innerHTML = `<div class="icon x-file a-${nameWithoutExtension}"></div> <a href="${fileUrl}" target="_blank" onclick="event.stopPropagation();">${file.name}</a>`;
+        }
+        li.oncontextmenu = (event) => showContextMenu(event, li, file.name, file.isDirectory);
+        li.onclick = () => toggleSelection(li, file.name, file.isDirectory);
+        fileList.appendChild(li); 
+      });
+
+    })
+    .catch(error => {
+      console.error("File loading error:", error);
+    });
+}
+
+loadFiles(currentPath);
+
+</script>
+
+<footer dir="rtl">
+  ساخته شده با ❤️ توسط Amir Roohi(hitter356)
+</footer>
+    </body>
+    <script src="/Js/message-fiilgoo-v1.js"></script>
+
+</html>
