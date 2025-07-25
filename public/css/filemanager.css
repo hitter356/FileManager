@@ -1,0 +1,477 @@
+@import url('https://v1.fontapi.ir/css/Vazir');
+
+:root{
+    --color-background: rgb(238, 238, 238);
+    --color-hover:rgb(207, 207, 207);
+    --color-hover2:rgb(187, 187, 187);
+    --color-hover3:rgb(218, 218, 218);
+    --color-loading-background: rgba(238, 238, 238, 0.555);
+    --color-text: rgb(17, 17, 17);
+    --color-bold:#242424;
+    --font:'vazir';
+
+    --color-border:#d3d3d3;
+    --color-border-bold:#b4b4b4;
+
+}
+*{
+    color:var(--color-text); 
+    font-family: var(--font);
+}
+html,body{
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: #ebebeb #292929;
+}
+footer{
+    position: fixed;
+    bottom: 0;
+    right: 0px;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    font-family: 'Vazir';
+    background-color: var(--color-background);
+    border-top: 1px solid var(--color-border);
+    padding: 3px;
+    font-size: 15px;
+}
+a { color:var(--color-bold); text-decoration: none; font-size: 15px; }
+ul { list-style: none; padding: 0; }
+li { padding: 6px 0; }
+
+.loadingPanel{
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    right: 0;
+    background-color: var(--color-loading-background);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999999;
+}
+.icon{
+    min-width: 18px;
+    min-height: 18px;
+    user-select: none;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+.display-flex{
+    display: flex;
+}
+
+.a-button-icon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    padding: 5px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.5s;
+}
+.a-button-icon:hover{
+    background-color: var(--color-hover2);
+}
+
+.x-sp{
+    width: 1px;
+    height: -webkit-fill-available;
+    background-color: var(--color-border);
+    display: inline-block;
+}
+.x-folder{
+    background-image: url('/sorce/icon/folder_480px.png');
+}
+.x-file{
+    background-image: url('/sorce/icon/file_96px.png');
+}
+.x-copy{
+    background-image: url('/sorce/icon/copy_144px.png');
+}
+.x-move{
+    background-image: url('/sorce/icon/send_backward_480px.png');
+}
+.x-paste{
+    background-image: url('/sorce/icon/paste_480px.png');
+}
+.x-download{
+    background-image: url('/sorce/icon/download_from_cloud_512px.png');
+}
+.x-delete{
+    background-image: url('/sorce/icon/delete_480px.png');
+}
+.x-rename{
+    background-image: url('/sorce/icon/rename_96px.png');
+}
+.x-path{
+    background-image: url('/sorce/icon/link_480px.png');
+}
+
+.x-new-folder{
+    background-image: url('/sorce/icon/Doctors Folder_512px.png');
+}
+.x-new-file{
+    background-image: url('/sorce/icon/new_copy_208px.png');
+}
+.x-back-p{
+    background-image: url('/sorce/icon/left_144px.png');
+}
+.x-home-p{
+    background-image: url('/sorce/icon/Shared Folder_512px.png');
+}
+.x-close{
+    background-image: url('/sorce/icon/close_window_240px.png');
+}
+.x-info{
+    background-image: url('/sorce/icon/info_512px.png');
+}
+
+
+
+.a-css,
+.a-Css{
+    background-image: url('/sorce/icon/css_512px.png');
+}
+.a-js,
+.a-Js{
+    background-image: url('/sorce/icon/js_squared_512px.png');
+}
+.a-html{
+    background-image: url('/sorce/icon/html_5_500px.png');
+}
+.a-docx{
+    background-image: url('/sorce/icon/microsoft_word_480px.png');
+}
+.a-pdf{
+    background-image: url('/sorce/icon/pdf_480px.png');
+}
+.a-txt,
+.a-{
+    background-image: url('/sorce/icon/text_480px.png');
+}
+.a-php{
+    background-image: url('/sorce/icon/php_480px.png');
+}
+.a-py{
+    background-image: url('/sorce/icon/python_480px.png');
+}
+.a-json{
+    background-image: url('/sorce/icon/placeholder_thumbnail_json_512px.png');
+}
+.a-xml{
+    background-image: url('/sorce/icon/placeholder_thumbnail_xml_144px.png');
+}
+.a-sql{
+    background-image: url('/sorce/icon/postgresql_512px.png');
+}
+.a-exe{
+    background-image: url('/sorce/icon/batch_script_512px.png');
+}
+.a-zip,
+.a-tar,
+.a-gz,
+.a-xz{
+    background-image: url('/sorce/icon/zipper_96px.png');
+}
+.a-rar{
+    background-image: url('/sorce/icon/archive_500px.png');
+}
+.a-7z{
+    background-image: url('/sorce/icon/7zip_500px.png');
+}
+
+
+.a-sorce{
+    background-image: url('/sorce/icon/Internet Folder_512px.png');
+}
+.a-Music,
+.a-music{
+    background-image: url('/sorce/icon/Music Folder_512px.png');
+}
+.a-auth{
+    background-image: url('/sorce/icon/User Folder_512px.png');
+}
+
+.a-mp3,
+.a-wav,
+.a-mp2,
+.a-m4a,
+.a-aac,
+.a-flac{
+    background-image: url('/sorce/icon/music_96px.png');
+}
+.a-mp4,
+.a-mkv,
+.a-avi,
+.a-mov,
+.a-webm,
+.a-flv{
+    background-image: url('/sorce/icon/video_96px.png');
+}
+.a-jpg,
+.a-jpeg,
+.a-bmp,
+.a-ico{
+    background-image: url('/sorce/icon/image_144px.png');
+}
+.a-png,
+.a-webp{
+    background-image: url('/sorce/icon/image2_144px.png');
+}
+.a-gif{
+    background-image: url('/sorce/icon/animated_96px.png');
+}
+.a-svg{
+    background-image: url('/sorce/icon/broken_heart_96px.png');
+}
+/*---*/
+
+.File-management{
+    position: relative;
+    background-color: var(--color-background);
+    color:var(--color-text);
+    font-family: var(--font);
+}
+.File-management-fillgoo{
+    position: relative;
+    width: 100%;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 5px;
+    padding: 5px;
+}
+.fillgoo-img{
+    width: 30px;
+    height: 30px;
+}
+.File-management-user{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 8px;
+}
+#userTitel{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid var(--color-border-bold);
+    pointer-events: none;
+}
+#userLogin i{
+    font-size: 16px;
+}
+.File-management-header-navbar{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid var(--color-border);
+}
+.File-management-header-navbar h2 ,
+.File-management-header-navbar #file-actions{
+    width: 100%;
+}
+#file-actions{
+    display: flex;
+    align-items: center;
+    justify-content: right;
+}
+.File-management-body{
+    padding: 5px 1rem;
+}
+.btn-upload{
+    border: 2px solid #292929;
+    padding: 3px 10px;
+    border-radius: 12px;
+    margin-right: 4px;
+    font-size: 14px;
+    cursor: crosshair;
+}
+.file{
+    position: relative;
+    display: flex;
+    gap: 3px;
+    align-items: center;
+    font-size: 15px;
+    padding-left: 2px;
+    text-decoration:underline;
+}
+.folder { font-weight: bold;
+    position: relative;
+    display: flex;
+    gap: 3px;
+    align-items: center;
+    font-size: 15px;
+}
+.folder a ,
+.file a{
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+}
+.File-management-body ul li{
+    transition:background-color 0.5s ease;
+}
+.File-management-body ul li:hover{
+    background-color: var(--color-hover3);
+}
+.selected {
+background-color:var(--color-hover);
+animation: selecteditemhover1 0.6s ease-out;
+}
+#context-menu{
+    animation: menuShow 0.4s ease;
+}
+@keyframes menuShow {
+    from {
+        opacity: 0;
+        transform: scale(0.5) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+.selected::after{
+    content: '';
+    position: absolute;
+    left: -7px;
+    width: 5px;
+    height: 95%;
+    display: inline-block;
+    background-color: #202020;
+    border-radius: 10px;
+    animation: flip20 0.5s ease-out;
+}
+@keyframes flip20 {
+    0% { transform: rotateX(0deg); }
+    50% { transform: rotateX(90deg);  }
+    100% { transform: rotateX(0deg);}
+}
+@keyframes selecteditemhover1 {
+    0% { 
+        background-color:var(--color-hover2) ;
+     }
+    100% { 
+        background-color: revert-layer;
+     }
+}
+#infoPanel{
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    display: block;
+    overflow: auto;
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    top: 0;
+    right: 0;
+    animation: slideInInfoPanel 0.3s ease;
+}
+
+@keyframes slideInInfoPanel {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+#infoPanel h4{
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+.infoPanel-text{
+    border-bottom: 2px solid var(--color-border);
+    display: grid;
+    width: 100%;
+    align-content: center;
+    justify-items: anchor-center;
+}
+.infoPanel-close{
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    top: 5px;
+    right: 6px;
+}
+#infoPanel img,
+#infoPanel video,
+#infoPanel audio {
+  width: 100%;
+  border-radius: 6px;
+  margin: 8px 0;
+  max-height: 250px;
+  object-fit: cover;
+}
+#infoPanel img{
+    width: 120px;
+}
+
+#infoPanel video {
+  background-color: #000;
+}
+
+
+#context-menu{
+    position: absolute;
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    filter: drop-shadow(0px 1px 6px #24242462);
+    border-radius: 6px;
+    padding: 6px 0;
+    min-width: 180px;
+    z-index: 1000;
+    list-style: none;
+    font-size: 14px; 
+    direction: rtl;
+}
+#context-menu li{
+    display: flex;
+    align-items: center;
+    padding: 6px 10px 6px 3px;
+    border-bottom: 1px solid #e5e5e5de;
+    cursor: pointer;
+    transition: 0.5s;
+}
+#context-menu li:hover{
+    background-color: var(--color-hover3);
+}
+
+#file-actions button{
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 3px 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+#file-actions button:hover{
+
+}
+#file-actions button:disabled{
+    filter: opacity(0.5);
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+@media (max-width: 768px) {
+    .File-management-header-navbar{
+        display: block;
+    }
+}
